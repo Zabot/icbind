@@ -44,6 +44,8 @@ def main():
                               args.build_dir
                               ])
     build.wait()
+    if build.returncode != 0:
+        sys.exit(build.returncode)
 
 
 if __name__ == '__main__':
