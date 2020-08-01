@@ -39,9 +39,10 @@ def main():
     print("Building in {}".format(args.build_dir))
     build = subprocess.Popen(['docker',
                               'build',
-                              args.build_dir,
                               '-f',
-                              args.file])
+                              args.file,
+                              args.build_dir
+                              ])
     build.wait()
 
 
