@@ -12,7 +12,7 @@ def main():
     parser.add_argument('-f', dest='file', default=None)
     parser.add_argument('-d', dest='build_dir', default=None)
     parser.add_argument('PATH')
-    parser.add_argument('DOCKER OPTIONS', nargs=argparse.REMAINDER)
+    parser.add_argument('DOCKER_OPTS', nargs=argparse.REMAINDER)
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -41,7 +41,8 @@ def main():
                               'build',
                               '-f',
                               args.file,
-                              args.build_dir
+                              *args.DOCKER_OPTS,
+                              args.build_dir,
                               ])
     build.wait()
     if build.returncode != 0:
