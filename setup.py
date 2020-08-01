@@ -8,9 +8,13 @@ setup(
     entry_points={
         'console_scripts': [
             'icbind = icbind.icbind:main',
+            'icbind-compose = icbind.icbind_compose:main',
         ]
     },
     license='GPLv3',
+    install_requires=[
+        'pyyaml',
+    ],
     long_description=open('readme.md').read(),
 )
 
