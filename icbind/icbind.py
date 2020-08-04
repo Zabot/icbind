@@ -13,6 +13,7 @@ def main():
     parser.add_argument('-d', dest='build_dir', default=None)
     parser.add_argument('PATH')
     parser.add_argument('DOCKER_OPTS', nargs=argparse.REMAINDER)
+    parser.add_argument('--dry_run', action='store_true')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -37,16 +38,21 @@ def main():
 
     # Build the image in the build directory
     print("Building in {}".format(args.build_dir))
-    build = subprocess.Popen(['docker',
-                              'build',
-                              '-f',
-                              args.file,
-                              *args.DOCKER_OPTS,
-                              args.build_dir,
-                              ])
-    build.wait()
-    if build.returncode != 0:
-        sys.exit(build.returncode)
+    cmd = ['docker',
+            'build',
+            '-f',
+            args.file,
+            *args.DOCKER_OPTS,
+            args.build_dir
+            ]
+
+    if args.dry_run:
+        print(cmd)
+    else:
+        build = subprocess.Popen(cmd)
+        build.wait()
+        if build.returncode != 0:
+            sys.exit(build.returncode)
 
 
 if __name__ == '__main__':
