@@ -9,3 +9,7 @@ to include the referenced directory in the build context at build time. The
 included directory _does not_ have to be inside the main build context, it is
 copied into the build context at build time
 
+### Running scripts on the host machine prior to a build
+Add `#run <command>` to run a script on the host machine in the build context
+before executing the dockerfile
+
