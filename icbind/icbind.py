@@ -3,7 +3,7 @@ import subprocess
 import sys
 import tempfile
 
-from icbind.macros import regexes
+from icbind.macros import execute_macros, flags
 from icbind import directory_sync
 
 
@@ -25,16 +25,16 @@ def main():
     if not args.file:
         args.file = args.PATH + '/Dockerfile'
 
-    print("Synchronizing default context to build directory")
-    directory_sync(args.PATH, args.build_dir)
+    # Execute read only macros to get any metadata from dockerfile
+    execute_macros(args.file, args.PATH, args.build_dir, True)
 
-    # Search the dockerfile for any macros and execute them
-    with open(args.file) as dockerfile:
-        for line in dockerfile.readlines():
-            for regex, parser in regexes:
-                m = regex.match(line)
-                if m:
-                    parser(m, args.PATH, args.build_dir)
+    # Don't copy the dockerfile context into the build directory automatically
+    if 'nocontext' not in flags:
+        print("Synchronizing default context to build directory")
+        directory_sync(args.PATH, args.build_dir)
+
+    # Now execute all macros
+    execute_macros(args.file, args.PATH, args.build_dir, False)
 
     # Build the image in the build directory
     print("Building in {}".format(args.build_dir))

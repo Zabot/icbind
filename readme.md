@@ -13,3 +13,8 @@ copied into the build context at build time
 Add `#run <command>` to run a script on the host machine in the build context
 before executing the dockerfile
 
+### Flags
+Add `#flags <list_of_flags>` to provide modifiers to icbind. Supported flags
+are:
+
+* `nocontext` -- Don't automatically copy the path into the build directory.

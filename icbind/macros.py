@@ -39,7 +39,27 @@ def run(match, context, build_dir):
         sys.exit(run.returncode)
 
 
+def set_flags(match, context, build_dir):
+    flags.update(match[1].split(','))
+
+
+flags = set()
 regexes = [
-    (re.compile('^\\s*#\\s*include\\s+(\\S+)\\s*(\\S+)?$'), include),
-    (re.compile('^\\s*#\\s*run\\s+(\\S+)\\s*(.+)?$'), run),
+    (re.compile('^\\s*#\\s*include\\s+(\\S+)\\s*(\\S+)?$'),  False, include),
+    (re.compile('^\\s*#\\s*run\\s+(\\S+)\\s*(.+)?$'),        False, run),
+    (re.compile('^\\s*#\\s*flags\\s+(\\S+(?:,\\S+)*)\\s*$'), True,  set_flags),
 ]
+
+
+def execute_macros(dockerfile_path,
+                   dockerfile_context,
+                   build_context,
+                   read_only=False):
+    # Search the dockerfile for any macros and execute them
+    with open(dockerfile_path) as dockerfile:
+        for line in dockerfile.readlines():
+            for regex, ro, parser in regexes:
+                if not read_only or ro:
+                    m = regex.match(line)
+                    if m:
+                        parser(m, dockerfile_context, build_context)
