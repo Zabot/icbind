@@ -1,7 +1,7 @@
 import argparse
+import os
 import subprocess
 import sys
-import tempfile
 
 from icbind.macros import execute_macros, flags
 from icbind import directory_sync
@@ -17,9 +17,11 @@ def main():
 
     args = parser.parse_args(sys.argv[1:])
 
+    args.PATH = os.path.abspath(args.PATH)
+
     # If no custom build directory, generate temporary file
     if not args.build_dir:
-        args.build_dir = tempfile.mkdtemp()
+        args.build_dir = '/tmp/icbind/builds/' + args.PATH
 
     # If no file argument, assume dockerfile is in root of build context
     if not args.file:
