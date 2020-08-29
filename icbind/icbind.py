@@ -33,7 +33,7 @@ def main():
     # Don't copy the dockerfile context into the build directory automatically
     if 'nocontext' not in flags:
         print("Synchronizing default context to build directory")
-        directory_sync(args.PATH, args.build_dir)
+        directory_sync(args.PATH + '/', args.build_dir)
 
     # Now execute all macros
     execute_macros(args.file, args.PATH, args.build_dir, False)

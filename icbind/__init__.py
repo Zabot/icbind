@@ -1,7 +1,13 @@
-import shutil
+import os
+import subprocess
+import sys
 
 
-# Synchronize the contents of two directories, creating parent directories as
-# nedded
 def directory_sync(src, dest):
-    shutil.copytree(src, dest, dirs_exist_ok=True)
+    os.makedirs(dest, exist_ok=True)
+    cmd = ['rsync', '-av', '--progress', src, dest]
+
+    rsync = subprocess.Popen(cmd)
+    rsync.wait()
+    if rsync.returncode != 0:
+        sys.exit(rsync.returncode)
