@@ -4,7 +4,7 @@ import pathlib
 import subprocess
 import sys
 
-from icbind.macros import execute_macros, flags
+from icbind.macros import execute_macros
 from icbind import directory_sync
 
 
@@ -20,6 +20,7 @@ def main():
     parser.add_argument('PATH')
     parser.add_argument('DOCKER_OPTS', nargs=argparse.REMAINDER)
     parser.add_argument('--dry_run', action='store_true')
+    parser.add_argument('--show_depends', action='store_true')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -34,12 +35,18 @@ def main():
         args.file = args.PATH + '/Dockerfile'
 
     # Execute read only macros to get any metadata from dockerfile
-    execute_macros(args.file, args.PATH, args.build_dir, True)
+    metadata = execute_macros(args.file, args.PATH, args.build_dir, True)
 
     # Don't copy the dockerfile context into the build directory automatically
-    if 'nocontext' not in flags:
-        print("Synchronizing default context to build directory")
-        directory_sync(args.PATH + '/', args.build_dir)
+    if 'nocontext' not in metadata['flags']:
+        metadata['depends'].add(args.PATH + '/')
+        if not args.show_depends:
+            print("Synchronizing default context to build directory")
+            directory_sync(args.PATH + '/', args.build_dir)
+
+    if args.show_depends:
+        print(' '.join(metadata['depends']))
+        return 0
 
     # Now execute all macros
     execute_macros(args.file, args.PATH, args.build_dir, False)
