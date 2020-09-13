@@ -1,5 +1,6 @@
 import argparse
 import os
+import pathlib
 import subprocess
 import sys
 
@@ -10,6 +11,11 @@ from icbind import directory_sync
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', dest='file', default=None)
+    parser.add_argument(
+            '-o',
+            dest='outfile',
+            default=None,
+            help='Leave an output file with a timestamp of the last build')
     parser.add_argument('-d', dest='build_dir', default=None)
     parser.add_argument('PATH')
     parser.add_argument('DOCKER_OPTS', nargs=argparse.REMAINDER)
@@ -55,6 +61,10 @@ def main():
         build.wait()
         if build.returncode != 0:
             sys.exit(build.returncode)
+
+        # Touch the output file to update the modified timestamp
+        if args.outfile:
+            pathlib.Path(args.outfile).touch()
 
 
 if __name__ == '__main__':
