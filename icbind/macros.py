@@ -48,10 +48,15 @@ def set_flags(match, context, build_dir, ro=False, metadata={}):
     metadata['flags'].update(match[1].split(','))
 
 
+def base_image(match, context, build_dir, ro=False, metadata={}):
+    metadata['base_image'] = match[1]
+
+
 regexes = [
     (re.compile('^\\s*#\\s*include\\s+(\\S+)\\s*(\\S+)?$'),  include),
     (re.compile('^\\s*#\\s*run\\s+(\\S+)\\s*(.+)?$'),        run),
     (re.compile('^\\s*#\\s*flags\\s+(\\S+(?:,\\S+)*)\\s*$'), set_flags),
+    (re.compile('^\\s*FROM\\s+([^:]*)(?::(.*))?.*$'), base_image),
 ]
 
 

@@ -21,6 +21,7 @@ def main():
     parser.add_argument('DOCKER_OPTS', nargs=argparse.REMAINDER)
     parser.add_argument('--dry_run', action='store_true')
     parser.add_argument('--show_depends', action='store_true')
+    parser.add_argument('--show_base', action='store_true')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -36,6 +37,10 @@ def main():
 
     # Execute read only macros to get any metadata from dockerfile
     metadata = execute_macros(args.file, args.PATH, args.build_dir, True)
+
+    if args.show_base:
+        print(metadata['base_image'])
+        return 0
 
     # Don't copy the dockerfile context into the build directory automatically
     if 'nocontext' not in metadata['flags']:
