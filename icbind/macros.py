@@ -8,11 +8,11 @@ from icbind import directory_sync
 
 
 def include(match, context, build_dir, ro=False, metadata={}):
-    included_path = context + '/' + match[1]
+    included_path = context + '/' + match.group(1)
 
     # If a destination path was specified, copy to it
-    if match[2]:
-        dest_path = build_dir + '/' + match[2]
+    if match.group(2):
+        dest_path = build_dir + '/' + match.group(2)
     else:
         dest_path = build_dir
 
@@ -23,15 +23,15 @@ def include(match, context, build_dir, ro=False, metadata={}):
 
 
 def run(match, context, build_dir, ro=False, metadata={}):
-    if match[2]:
-        args = match[2].split()
+    if match.group(2):
+        args = match.group(2).split()
     else:
         args = []
 
     # Get the absolute path of the command
     wd = os.getcwd()
     os.chdir(context)
-    exe_path = os.path.abspath(shutil.which(match[1]))
+    exe_path = os.path.abspath(shutil.which(match.group(1)))
     os.chdir(wd)
 
     metadata['depends'].add(exe_path)
@@ -45,11 +45,11 @@ def run(match, context, build_dir, ro=False, metadata={}):
 
 
 def set_flags(match, context, build_dir, ro=False, metadata={}):
-    metadata['flags'].update(match[1].split(','))
+    metadata['flags'].update(match.group(1).split(','))
 
 
 def base_image(match, context, build_dir, ro=False, metadata={}):
-    metadata['base_image'] = match[1]
+    metadata['base_image'] = match.group(1)
 
 
 regexes = [
